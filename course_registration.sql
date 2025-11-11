@@ -44,18 +44,18 @@ CREATE TABLE enrollments (
 
 -- --- Insert Sample Data ---
 
--- 1. Students (Same as your XML)
+-- 1. Students 
 INSERT INTO students (username, password, name) VALUES
 ('Ravi', 'p1', 'Ravi Shankar'),
 ('r2', 'p2', 'Rishu');
 
--- 2. Courses (Same as your XML)
+-- 2. Courses 
 INSERT INTO courses (id, name, instructor, totalSeats, remainingSeats, dayOfWeek, time) VALUES
 ('CS101', 'Intro to Java', 'Dr. Smith', 10, 10, 'Mon/Wed/Fri', '9:00 AM - 9:50 AM'),
 ('MATH200', 'Calculus II', 'Prof. Davis', 5, 5, 'Tue/Thu', '1:00 PM - 2:15 PM'),
 ('ART150', 'Art History', 'Dr. Lee', 2, 2, 'Mon/Wed', '11:00 AM - 12:15 PM');
 
--- 3. Grades (Same as your XML)
+-- 3. Grades 
 INSERT INTO grades (studentUsername, courseId, courseName, letterGrade, semester) VALUES
 ('Ravi', 'HIST101', 'World History', 'A-', 'Fall 2024'),
 ('Ravi', 'PHYS150', 'Intro to Physics', 'B+', 'Fall 2024'),
