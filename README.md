@@ -11,7 +11,7 @@ Built using **Java Servlets**, **JSP**, and **MySQL** for data persistence, feat
 ### Login & Dashboard
 | Login Page | Student Dashboard |
 |:---:|:---:|
-| ![Login Page](https://github.com/user-attachments/assets/85aeeda6-5ea0-4221-a0ea-8bb07d11fa5) | ![Dashboard](https://github.com/user-attachments/assets/64099193-5ff0-470b-ba80-5c73e472ba50) |
+| ![Login Page](https://github.com/user-attachments/assets/cba023e3-6a30-41c2-a8c0-9240e07f5440) | ![Dashboard](https://github.com/user-attachments/assets/64099193-5ff0-470b-ba80-5c73e472ba50) |
 
 ### Course Management
 | Course Catalog | Enrollment Success |
