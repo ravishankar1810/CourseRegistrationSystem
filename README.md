@@ -11,7 +11,7 @@ Built using **Java Servlets**, **JSP**, and **XML** for data persistence, featur
 ### Login & Dashboard
 | Login Page | Student Dashboard |
 |:---:|:---:|
-| ![Login Page](screenshots/login.png) | ![Dashboard](screenshots/dashboard.png) |
+| ![Login Page](https://github.com/user-attachments/assets/85aeeda6-5ea0-4221-a0ea-8bb07d11fae5) | ![Dashboard](screenshots/dashboard.png) |
 
 ### Course Management
 | Course Catalog | Enrollment Success |
