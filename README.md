@@ -16,12 +16,12 @@ Built using **Java Servlets**, **JSP**, and **XML** for data persistence, featur
 ### Course Management
 | Course Catalog | Enrollment Success |
 |:---:|:---:|
-| ![Catalog](screenshots/catalog.png) | ![Success Alert](screenshots/success.png) |
+| ![Catalog](https://github.com/user-attachments/assets/2c58a327-121d-4025-a07a-2fa7dfd151e0) | ![Success Alert](https://github.com/user-attachments/assets/4c23b36d-6b77-4e1b-bccd-25c14a9cb7b8) |
 
 ### Student Features
 | Weekly Timetable | Academic Grades |
 |:---:|:---:|
-| ![Timetable](screenshots/timetable.png) | ![Grades](screenshots/grades.png) |
+| ![Timetable](https://github.com/user-attachments/assets/b9632247-88a1-4490-8253-f44a68789952) | ![Grades](https://github.com/user-attachments/assets/8ea2a1ad-4d4e-412f-8d05-699332f1a2bf) |
 
 ---
 
