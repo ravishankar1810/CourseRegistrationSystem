@@ -12,10 +12,12 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
+// ... (imports) ...
+
 @WebServlet("/enroll")
 public class EnrollServlet extends HttpServlet {
     private CourseDAO courseDAO = new CourseDAO();
-    private StudentDAO studentDAO = new StudentDAO();
+    private StudentDAO studentDAO = new StudentDAO(); // Keep this
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -29,28 +31,33 @@ public class EnrollServlet extends HttpServlet {
         }
 
         String courseId = request.getParameter("courseId");
-        boolean success = courseDAO.decreaseSeats(courseId);
 
-        if (success) {
-            // Now, add the course to the student's list and save
-            List<Student> allStudents = studentDAO.getAllStudents();
-            for (Student s : allStudents) {
-                if (s.getUsername().equals(student.getUsername())) {
-                    if (!s.getEnrolledCourseIds().contains(courseId)) { // Avoid duplicates
-                        s.getEnrolledCourseIds().add(courseId);
-                        studentDAO.saveStudents(allStudents);
-                        session.setAttribute("student", s); // Refresh session
-                    }
-                    break;
-                }
+        // --- THIS IS THE NEW LOGIC ---
+        // 1. First, try to decrease the seat
+        boolean seatDecreased = courseDAO.decreaseSeats(courseId);
+
+        if (seatDecreased) {
+            // 2. If seat was decreased, add to student's enrollments
+            boolean enrolled = studentDAO.addEnrollment(student.getUsername(), courseId);
+
+            if (enrolled) {
+                // 3. Refresh the student object in the session
+                session.setAttribute("student", studentDAO.getStudentByUsername(student.getUsername()));
+                request.setAttribute("message", "Success! You have enrolled in " + courseId);
+                request.setAttribute("messageType", "success");
+            } else {
+                // This could happen if they are already enrolled
+                // Rollback: Give the seat back
+                courseDAO.increaseSeats(courseId);
+                request.setAttribute("message", "Enrollment Failed: You are already enrolled in this course.");
+                request.setAttribute("messageType", "error");
             }
-
-            request.setAttribute("message", "Success! You have enrolled in " + courseId);
-            request.setAttribute("messageType", "success");
         } else {
+            // This means the course is full
             request.setAttribute("message", "Enrollment Failed: Course is full.");
             request.setAttribute("messageType", "error");
         }
+        // --- END OF NEW LOGIC ---
 
         request.getRequestDispatcher("/catalog").forward(request, response);
     }

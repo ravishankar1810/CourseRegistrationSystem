@@ -1,93 +1,97 @@
 package com.example.dao;
 
 import com.example.model.Course;
-import com.example.model.CourseList;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
-import java.io.File;
-import java.util.List;
+import com.example.util.DBUtil;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CourseDAO {
-    private static final String FILE_PATH = "D:/CourseData/courses.xml";
 
-    // READ: Get all courses
+    // Gets all courses from the DB
     public List<Course> getAllCourses() {
-        try {
-            File file = new File(FILE_PATH);
-            if (!file.exists()) return new ArrayList<>();
+        List<Course> courses = new ArrayList<>();
+        String sql = "SELECT * FROM courses";
 
-            JAXBContext context = JAXBContext.newInstance(CourseList.class);
-            Unmarshaller un = context.createUnmarshaller();
-            CourseList list = (CourseList) un.unmarshal(file);
-            return list.getCourses();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
-    // WRITE: Save entire list back to XML
-    public void saveCourses(List<Course> courses) {
-        try {
-            CourseList list = new CourseList();
-            list.setCourses(courses);
-
-            JAXBContext context = JAXBContext.newInstance(CourseList.class);
-            Marshaller m = context.createMarshaller();
-            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            m.marshal(list, new File(FILE_PATH));
-        } catch (Exception e) {
+            while (rs.next()) {
+                courses.add(mapCourse(rs));
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+        return courses;
     }
 
-    // NEW SYNCHRONIZED METHOD ADDS HERE
-    public synchronized boolean decreaseSeats(String courseId) {
-        try {
-            List<Course> courses = getAllCourses();
-            boolean found = false;
-            for (Course c : courses) {
-                if (c.getId().equals(courseId)) {
-                    if (c.getRemainingSeats() > 0) {
-                        c.setRemainingSeats(c.getRemainingSeats() - 1);
-                        found = true;
-                    } else {
-                        return false; // No seats left!
-                    }
-                    break; // Found the course, stop looping
+    // Gets a single course by its ID
+    public Course getCourseById(String courseId) {
+        String sql = "SELECT * FROM courses WHERE id = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, courseId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapCourse(rs);
                 }
             }
-
-            if (found) {
-                saveCourses(courses); // Write updated list back to XML
-                return true;
-            }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
-    // NEW: Add this method to increase seats (Drop course)
-    public synchronized boolean increaseSeats(String courseId) {
-        try {
-            List<Course> courses = getAllCourses();
-            for (Course c : courses) {
-                if (c.getId().equals(courseId)) {
-                    // Only increase if it is not already at max capacity
-                    if (c.getRemainingSeats() < c.getTotalSeats()) {
-                        c.setRemainingSeats(c.getRemainingSeats() + 1);
-                        saveCourses(courses);
-                        return true;
-                    } else {
-                        return false; // Already empty, can't drop more
-                    }
-                }
-            }
-        } catch (Exception e) {
+
+    // Decreases the seat count for a course
+    public boolean decreaseSeats(String courseId) {
+        String sql = "UPDATE courses SET remainingSeats = remainingSeats - 1 " +
+                "WHERE id = ? AND remainingSeats > 0";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, courseId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0; // Was the update successful?
+
+        } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
+    }
+
+    // Increases the seat count for a course
+    public boolean increaseSeats(String courseId) {
+        String sql = "UPDATE courses SET remainingSeats = remainingSeats + 1 " +
+                "WHERE id = ? AND remainingSeats < totalSeats";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, courseId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Helper to build a Course object from a ResultSet
+    private Course mapCourse(ResultSet rs) throws SQLException {
+        Course c = new Course();
+        c.setId(rs.getString("id"));
+        c.setName(rs.getString("name"));
+        c.setInstructor(rs.getString("instructor"));
+        c.setTotalSeats(rs.getInt("totalSeats"));
+        c.setRemainingSeats(rs.getInt("remainingSeats"));
+        c.setDayOfWeek(rs.getString("dayOfWeek"));
+        c.setTime(rs.getString("time"));
+        return c;
     }
 }

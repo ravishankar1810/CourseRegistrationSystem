@@ -13,10 +13,12 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
+// ... (imports) ...
+
 @WebServlet("/drop")
 public class DropServlet extends HttpServlet {
-    private CourseDAO courseDAO = new CourseDAO();
-    private StudentDAO studentDAO = new StudentDAO();
+    private final CourseDAO courseDAO = new CourseDAO();
+    private final StudentDAO studentDAO = new StudentDAO(); // Keep this
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -30,28 +32,25 @@ public class DropServlet extends HttpServlet {
         }
 
         String courseId = request.getParameter("courseId");
-        boolean success = courseDAO.increaseSeats(courseId);
 
-        if (success) {
-            // Now, remove the course from the student's list and save
-            List<Student> allStudents = studentDAO.getAllStudents();
-            for (Student s : allStudents) {
-                if (s.getUsername().equals(student.getUsername())) {
-                    if (s.getEnrolledCourseIds().contains(courseId)) {
-                        s.getEnrolledCourseIds().remove(courseId);
-                        studentDAO.saveStudents(allStudents);
-                        session.setAttribute("student", s); // Refresh session
-                    }
-                    break;
-                }
-            }
+        // --- THIS IS THE NEW LOGIC ---
+        // 1. First, remove the enrollment record
+        boolean enrollmentRemoved = studentDAO.removeEnrollment(student.getUsername(), courseId);
 
+        if (enrollmentRemoved) {
+            // 2. If removed, give the seat back
+            courseDAO.increaseSeats(courseId);
+
+            // 3. Refresh the student object in the session
+            session.setAttribute("student", studentDAO.getStudentByUsername(student.getUsername()));
             request.setAttribute("message", "Dropped " + courseId + ". Seat freed!");
             request.setAttribute("messageType", "success");
         } else {
-            request.setAttribute("message", "Could not drop " + courseId + " (Maybe it is already empty?)");
+            // This means they were never enrolled
+            request.setAttribute("message", "Could not drop " + courseId + " (You are not enrolled).");
             request.setAttribute("messageType", "error");
         }
+        // --- END OF NEW LOGIC ---
 
         request.getRequestDispatcher("/catalog").forward(request, response);
     }
