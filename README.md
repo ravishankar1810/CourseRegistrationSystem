@@ -21,7 +21,8 @@ Built using **Java Servlets**, **JSP**, and **MySQL** for data persistence, feat
 ### Student Features
 | Weekly Timetable | Academic Grades | Profile Management |
 |:---:|:---:|:---:|
-| ![Timetable](https://github.com/user-attachments/assets/b9632247-88a1-4490-8253-f44a68789952) | ![Grades](https://github.com/user-attachments/assets/8ea2a1ad-4d4e-412f-8d05-699332f1a2bf) | ** |
+| ![Timetable](https://github.com/user-attachments/assets/b9632247-88a1-4490-8253-f44a68789952) | ![Grades](https://github.com/user-attachments/assets/8ea2a1ad-4d4e-412f-8d05-699332f1a2bf) | <img width="1670" height="768" alt="image" src="https://github.com/user-attachments/assets/8a2e9c4a-3f32-47c8-ab93-4cba4441b830" />
+ |
 
 ---
 
