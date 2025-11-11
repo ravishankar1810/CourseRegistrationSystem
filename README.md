@@ -93,11 +93,11 @@ This project reads data from a specific folder on your hard drive.
 ---
 
 ## 📂 Project Structure (MVC)
-src/main/java/com/example
-├── dao/ # Data Access Objects (Handles XML reading/writing)
-├── model/ # POJO Classes (Student, Course, Grade)
-├── servlet/ # Controllers (Handles HTTP requests like /login, /enroll)
-└── webapp/ # Views (JSP files, CSS, WEB-INF)
+* src/main/java/com/example
+* ├── dao/ # Data Access Objects (Handles XML reading/writing)
+* ├── model/ # POJO Classes (Student, Course, Grade)
+* ├── servlet/ # Controllers (Handles HTTP requests like /login, /enroll)
+* └── webapp/ # Views (JSP files, CSS, WEB-INF)
 
 ---
 
