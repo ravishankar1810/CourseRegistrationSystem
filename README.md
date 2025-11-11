@@ -156,6 +156,6 @@ Follow these steps to run the project locally.
 ## 👥 Contributors
 ---
 
-_Developed for the Bachelor of Engineering Mini-Project at Chandigarh University._
+_Developed for the Bachelor of Engineering Project at Chandigarh University._
 
 
